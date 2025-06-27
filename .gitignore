@@ -1,0 +1,8 @@
+/**/target/
+.idea/
+logs/
+*/src/main/test/
+# */src/test/
+*/.mvn
+*.iml
+app/

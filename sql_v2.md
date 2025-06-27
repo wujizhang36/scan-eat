@@ -1,0 +1,103 @@
+-- SaaS 多商户扫码点餐系统 - 数据库建表 SQL（含字段注释 + 表注释）
+```sql
+-- 1. 租户表（商户）
+CREATE TABLE tenants (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '租户ID',
+name VARCHAR(100) NOT NULL COMMENT '租户名称',
+contact_name VARCHAR(50) COMMENT '联系人姓名',
+contact_phone VARCHAR(20) COMMENT '联系电话',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) COMMENT='租户（商户）表';
+
+-- 2. 门店表
+CREATE TABLE stores (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '门店ID',
+tenant_id BIGINT NOT NULL COMMENT '所属租户ID',
+name VARCHAR(100) NOT NULL COMMENT '门店名称',
+address VARCHAR(255) COMMENT '门店地址',
+phone VARCHAR(20) COMMENT '门店电话',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) COMMENT='门店信息表';
+
+-- 3. 餐桌表
+CREATE TABLE tables (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '餐桌ID',
+store_id BIGINT NOT NULL COMMENT '所属门店ID',
+table_no VARCHAR(20) NOT NULL COMMENT '餐桌号',
+status VARCHAR(20) DEFAULT '空闲' COMMENT '状态：空闲/占用/预定中',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) COMMENT='餐桌表';
+
+-- 4. 菜品表
+CREATE TABLE dishes (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '菜品ID',
+tenant_id BIGINT NOT NULL COMMENT '租户ID',
+name VARCHAR(100) NOT NULL COMMENT '菜品名称',
+price DECIMAL(10,2) NOT NULL COMMENT '单价',
+image_url VARCHAR(255) COMMENT '菜品图片URL',
+category VARCHAR(50) COMMENT '分类',
+description TEXT COMMENT '描述',
+status VARCHAR(20) DEFAULT '上架' COMMENT '状态：上架/下架',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) COMMENT='菜品信息表';
+
+-- 5. 员工表
+CREATE TABLE staff (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '员工ID',
+tenant_id BIGINT NOT NULL COMMENT '所属租户ID',
+store_id BIGINT COMMENT '所属门店ID（为空则为租户管理员）',
+name VARCHAR(50) NOT NULL COMMENT '姓名',
+phone VARCHAR(20) COMMENT '电话',
+role VARCHAR(50) COMMENT '岗位/角色',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) COMMENT='员工表';
+
+-- 6. 购物车表
+CREATE TABLE cart (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '购物车ID',
+tenant_id BIGINT NOT NULL COMMENT '租户ID',
+store_id BIGINT NOT NULL COMMENT '门店ID',
+table_no VARCHAR(20) COMMENT '餐桌号',
+session_id VARCHAR(100) NOT NULL COMMENT '会话ID',
+user_name VARCHAR(50) COMMENT '用户昵称',
+items JSON COMMENT '购物车项（菜品及数量）',
+total_price DECIMAL(10,2) COMMENT '总金额',
+updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最近活动时间'
+) COMMENT='购物车监控表';
+
+-- 7. 订单表
+CREATE TABLE orders (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '订单ID',
+tenant_id BIGINT NOT NULL COMMENT '租户ID',
+store_id BIGINT NOT NULL COMMENT '门店ID',
+table_no VARCHAR(20) COMMENT '餐桌号',
+order_no VARCHAR(50) NOT NULL COMMENT '订单编号',
+total_price DECIMAL(10,2) NOT NULL COMMENT '订单总价',
+status VARCHAR(20) DEFAULT '待支付' COMMENT '订单状态',
+items JSON COMMENT '订单菜品明细',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '下单时间'
+) COMMENT='订单表';
+
+-- 8. 评价表
+CREATE TABLE reviews (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '评价ID',
+tenant_id BIGINT NOT NULL COMMENT '租户ID',
+store_id BIGINT NOT NULL COMMENT '门店ID',
+order_id BIGINT COMMENT '关联订单ID',
+user_name VARCHAR(50) COMMENT '评价人',
+rating INT CHECK (rating BETWEEN 1 AND 5) COMMENT '评分 1~5',
+content TEXT COMMENT '评价内容',
+reply TEXT COMMENT '商户回复',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '评价时间'
+) COMMENT='用户评价表';
+
+-- 9. 系统配置表（多 Tab 支持）
+CREATE TABLE system_config (
+id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '配置ID',
+tenant_id BIGINT NOT NULL COMMENT '租户ID',
+category VARCHAR(50) COMMENT '配置分类（如支付/打印/营业）',
+key_name VARCHAR(100) COMMENT '配置项名称',
+key_value TEXT COMMENT '配置值（JSON或字符串）',
+updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT='系统设置配置表';
+```
