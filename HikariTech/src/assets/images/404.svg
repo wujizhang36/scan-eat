@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#f9fafb"/>
+    <text x="200" y="130" text-anchor="middle" font-size="72" font-weight="bold" fill="#1f2937">404</text>
+    <text x="200" y="180" text-anchor="middle" font-size="18" fill="#6b7280">
+        页面未找到
+    </text>
+    <path d="M150 210 Q200 250 250 210" stroke="#9ca3af" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="170" cy="200" r="5" fill="#9ca3af"/>
+    <circle cx="230" cy="200" r="5" fill="#9ca3af"/>
+</svg>
